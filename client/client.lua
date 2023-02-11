@@ -1,15 +1,16 @@
 ESX = nil
 
 Citizen.CreateThread(function()
-	while ESX == nil do
-		if Config.OldESX then
+	export, ESX = pcall(function()
+        return exports.es_extended:getSharedObject()
+    end)
+	if not export then
+        while not ESX do
 			TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		elseif not Config.OldESX then
-			ESX = exports["es_extended"]:getSharedObject()
-		end
-		Citizen.Wait(10)
-	end
-	while ESX.GetPlayerData().job == nil do
+            Wait(100)
+        end
+    end
+	while not ESX.GetPlayerData().job do
 		Citizen.Wait(10)
 	end
 	ESX.PlayerData = ESX.GetPlayerData()
@@ -21,67 +22,42 @@ AddEventHandler('esx:setJob', function(job)
 end)
 
 Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(Config.CheckTime)
-		while ESX == nil do
-			Wait(100)
-		end
-
-		while ESX.PlayerData == nil do
-			Wait(100)
-		end
-
+	while ESX and ESX.PlayerData do
 		local playerPed = PlayerPedId()
-		
-		if not getEmergencyJob() and playerPed then
-			if IsPedInAnyVehicle(playerPed) then
-				vehicle = GetVehiclePedIsIn(playerPed, false)
-
-				if vehicle then
-					if GetPedInVehicleSeat(vehicle, -1) == playerPed then
-						getVehicleStatus(playerPed, vehicle)
+		if playerPed ~= 0 then
+			local vehicle = GetVehiclePedIsIn(playerPed, false)
+			if vehicle ~= 0 then
+				local seat = GetPedInVehicleSeat(vehicle, -1)
+				if seat == playerPed then
+					local isEmergencyJob = getEmergencyJob()
+					if not isEmergencyJob then
+						local isVehicleBlacklisted = getVehicleBlacklist(GetEntityModel(vehicle))
+						if isVehicleBlacklisted then
+							TaskLeaveVehicle(playerPed, vehicle, 1)
+							if Config.Notify then
+								ESX.ShowNotification(Config.NotifyMessage)
+							end
+						end
 					end
 				end
 			end
 		end
+		Citizen.Wait(Config.CheckTime)
 	end
 end)
 
 function getEmergencyJob()
-	if not ESX.PlayerData then
-		return false
-	end
-
 	for k,v in ipairs(Config.emergencyJobs) do
-		if v == ESX.PlayerData.job.name then
+		if ESX.PlayerData.job.name == v then
 			return true
 		end
 	end 
-
 	return false
 end
 
 function getVehicleBlacklist(model)
-	for _, blacklistedVehicle in pairs(Config.emergencyVehicles) do
-		if model == GetHashKey(blacklistedVehicle) then
-			return true
-		end
-	end
-
-	return false
-end
-
-function getVehicleStatus(Ped, vehicle)
-	if vehicle then
-		vehicleModel = GetEntityModel(vehicle)
-
-		if getVehicleBlacklist(vehicleModel) then
-			TaskLeaveVehicle(Ped, vehicle, 1)
-			
-			if Config.Notify then
-				ESX.ShowNotification(Config.NotifyMessage)
-			end
-
+	for k,v in ipairs(Config.emergencyVehicles) do
+		if model == GetHashKey(v) then
 			return true
 		end
 	end
