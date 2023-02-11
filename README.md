@@ -15,12 +15,12 @@ A script that allows you to make vehicles accessible only to a specific jobs, so
 
 > - Easy Configure which jobs can drive in emergency vehicles via the simple config.
 > - You will be ejected from the vehicle if you do not have the job that is allowed in the vehicle.
-> - Easy Configure what vehicles are only for emergency services like police, ambulance .
-> - The Script does not cause lag or reduce server performance
+> - Easy Configure what vehicles are only for emergency services like police, ambulance ect.
+> - The Script does not cause lag or reduce any performance
 
 ### Requirements:
 
-> - ESX (No matter which version just change config.lua)
+> - ESX (Doesn't matter which version.)
 
 # Download, Preview And Install
 
