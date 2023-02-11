@@ -44,3 +44,8 @@ ensure CarWhitelist-FiveM
   > - Fixed job checker sometime not working
   > - Fixed ESX bug
   > - Version checker update
+
+**Changelog v1.2.0**
+  > - **ESX Checker** so no change in config is needed
+  > - **Big** performance Update
+  > - **Fixed major bug** that allowed you to glitch the system
