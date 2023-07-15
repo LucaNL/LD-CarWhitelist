@@ -5,7 +5,7 @@ PerformHttpRequest("https://api.github.com/repos/LucaNL/CarWhitelist-FiveM/relea
 		local currentVersion = GetResourceMetadata(GetCurrentResourceName(), "version") 
 		local newestVersion = info.tag_name
 
-		print("  //\n  ||    "..GetCurrentResourceName().." is Created by "..info.author.login.."#2230\n  ||")
+		print("  //\n  ||    "..GetCurrentResourceName().." is Created by "..info.author.login.."\n  ||")
 
 		if ( newestVersion ~= nil ) then
 			if newestVersion ~= currentVersion then
