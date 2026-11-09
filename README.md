@@ -1,51 +1,61 @@
-<h1 align="center">Hi 👋, I'm LucaNL</h1>
-<h3 align="center">I'am a mainly FiveM Developer</h3>
+# LD CarWhitelist
 
-- 📫 How to reach me? Send me a message on here or **LucaNL#2230** on discord.
+**Free vehicle whitelist for FiveM.** Lock police cars, ambulances or any vehicle to jobs or permissions. Players without access are stopped while they try to get in, and the server checks again and removes anyone who got in anyway.
 
-I myself have always been looking for a good working script for a Car Whitelist system, so that I can choose which job can drive a vehicle so for example someone who is not a police cannot drive a police car and so on. 
+Works with ESX, QBCore and Qbox (detected automatically), or standalone with ACE permissions.
 
-But I could never really find anything good, and something that actually did it well so that's why I made this **CarWhitelist** Script.
+## Features
 
-# CarWhitelist-FiveM
+- **Groups of vehicles with their own access:** Police for `police` and `sheriff`, EMS for `ambulance`, your own groups for mechanics, taxis, gangs ...
+- **Access by job and minimum grade**, optionally **only while on duty**, or by **ACE permission** (works without a framework, and with Discord-role-to-ACE scripts).
+- **Only the driver seat is locked by default:** passengers can get in, like someone under arrest in the back. Per group you can lock every seat.
+- **Stopped before the door opens:** no getting in and being thrown out again.
+- **Enforced by the server too:** players put into a vehicle by a script or a cheat are removed. The client is not the only safeguard.
+- **Exceptions for other scripts:** set the `ldCarwhitelistBypass` state bag on a vehicle (e.g. a test drive at the dealer).
+- **Staff bypass** with one ACE: `ldcw.bypass`.
+- Optional **Discord log** when someone tries to take or gets removed from a locked vehicle.
+- Notifications through ox_lib, ESX, QBCore/Qbox or chat (auto-detected), 8 languages, update check.
 
-A script that allows you to make vehicles accessible only to a specific jobs, so you can make sure people don't steal emergency vehicles.
+## Install
 
-### Features:
+1. Download the latest release and put the `ld_carwhitelist` folder in your `resources` folder.
+2. Add to `server.cfg` (after your framework):
+   ```cfg
+   ensure ld_carwhitelist
+   add_ace group.admin ldcw.bypass allow
+   ```
+3. Restart the server. Police, EMS and fire vehicles are locked to those jobs out of the box; change the groups in `config.lua`.
 
-> - Easy Configure which jobs can drive in emergency vehicles via the simple config.
-> - You will be ejected from the vehicle if you do not have the job that is allowed in the vehicle.
-> - Easy Configure what vehicles are only for emergency services like police, ambulance ect.
-> - The Script does not cause lag or reduce any performance
+Using vehicle classes (`classes = { 18 }`)? Those are checked by the game only, because the server can't read a vehicle's class. For players with access to a class group, the server leaves the decision to the game, so it never removes someone the game allows. List the important models under `models` as well, so the server checks them too.
 
-### Requirements:
+The server never throws anyone out of a flying aircraft or a moving vehicle: it waits until the vehicle (nearly) stands still.
 
-> - ESX (Doesn't matter which version.)
+## For developers
 
-# Download, Preview And Install
+```lua
+-- server
+local allowed, group = exports.ld_carwhitelist:hasAccess(source, 'police')   -- model name, hash or vehicle entity
+exports.ld_carwhitelist:refreshPlayer(source)  -- after you changed a job or permission in your own script
 
-[**DOWNLOAD**](https://github.com/LucaNL/CarWhitelist-FiveM/archive/refs/heads/main.zip) 
+-- client
+local allowed, group = exports.ld_carwhitelist:canUse(vehicle, seat)        -- seat defaults to -1 (driver)
 
-[**PREVIEW**](https://www.youtube.com/watch?v=9GgRlp84NBM)
-
-### How to install
-1. [**Download**](https://github.com/LucaNL/CarWhitelist-FiveM/archive/refs/heads/main.zip) the recource.
-2. Change the config.lua to what you like.
-3. Add this to your server.cfg:
+-- any side: let everyone use one vehicle (e.g. a test drive)
+Entity(vehicle).state:set('ldCarwhitelistBypass', true, true)
 ```
-ensure CarWhitelist-FiveM
-```
-4. Restart Server.
 
-# Changelog
+## Support
 
-**Changelog v1.1.0**
-  > - Config better and clearer
-  > - Fixed job checker sometime not working
-  > - Fixed ESX bug
-  > - Version checker update
+Questions or ideas: open an issue, or join the LD Scripts Discord: https://discord.ldscripts.com
 
-**Changelog v1.2.0**
-  > - **ESX Checker** so no change in config is needed
-  > - **Big** performance Update
-  > - **Fixed major bug** that allowed you to glitch the system
+## More from LD Scripts
+
+- **LD Queue**: a reliable, fair connection queue with priority, restart protection and a live queue card.
+- **LD Refunds**: refunds and compensation for players, with a Discord bot and web dashboard.
+- Free: **LD CarWipe** (automatic vehicle cleanup) and **LD TimeDisplay** (real-life clock).
+
+See https://store.ldscripts.com
+
+## License
+
+MIT. Free to use and change on your server.
