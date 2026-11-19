@@ -3,7 +3,7 @@ game 'gta5'
 
 name 'ld_carwhitelist'
 author 'LD Scripts'
-version '2.0.0'
+version '2.1.0'
 description 'Lock vehicles to jobs or permissions: blocked before entering, enforced by the server'
 repository 'https://github.com/LucaNL/LD-CarWhitelist'
 

@@ -6,6 +6,11 @@ local PREFIX = '^5LD CarWhitelist^7'
 local STATE = 'ldcwAccess'          -- Player(src).state: { bypass = bool, groups = { group indexes } }
 local BYPASS_VEHICLE = 'ldCarwhitelistBypass'
 
+-- Vehicles that everyone may use, set by server scripts through the setVehicleBypass export.
+-- The server only trusts this list: the owner of a vehicle (the player driving it) can write the
+-- vehicle's state bag, so a cheater could set the state bag value on a locked vehicle himself.
+local bypassVehicles = {}
+
 local function log(tag, fmt, ...) print(('%s %s %s^0'):format(PREFIX, tag, fmt:format(...))) end
 local function ok(...) log('^2  OK ^7', ...) end
 local function info(...) log('^7 INFO^7', ...) end
@@ -122,7 +127,7 @@ end
 
 --- May this player use this vehicle seat? Returns true, or false plus the group that locks it.
 local function mayUse(src, vehicle, seat)
-    if Entity(vehicle).state[BYPASS_VEHICLE] then return true end
+    if bypassVehicles[vehicle] and DoesEntityExist(vehicle) then return true end
     local a = access[src] or compute(src)
     if a.bypass then return true end
     local group = Rules.lockedBy(Rules.groupsFor(GetEntityModel(vehicle)), a.set, seat)
@@ -230,6 +235,17 @@ end)
 
 --- exports.ld_carwhitelist:refreshPlayer(source) - after you changed a job or permission yourself
 exports('refreshPlayer', function(src) refresh(src) end)
+
+--- exports.ld_carwhitelist:setVehicleBypass(vehicle, true|false) - let everyone use one vehicle (server only)
+exports('setVehicleBypass', function(vehicle, enabled)
+    vehicle = tonumber(vehicle)
+    if not vehicle or not DoesEntityExist(vehicle) or GetEntityType(vehicle) ~= 2 then return false end
+    bypassVehicles[vehicle] = enabled and true or nil
+    Entity(vehicle).state:set(BYPASS_VEHICLE, enabled and true or nil, true) -- so the client side agrees
+    return true
+end)
+
+AddEventHandler('entityRemoved', function(entity) bypassVehicles[entity] = nil end)
 
 ----------------------------------------------------------------------------------------------------
 -- Update check: reads the latest release from GitHub once a day. Nothing about your server is sent.

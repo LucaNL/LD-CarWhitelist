@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+- **Security:** the server no longer trusts the `ldCarwhitelistBypass` state bag. The driver of a vehicle can write that vehicle's state bag, so a cheater could unlock a whitelisted vehicle for himself. Use the new server export instead: `exports.ld_carwhitelist:setVehicleBypass(vehicle, true)`. Setting the state bag yourself no longer lets players past the server check.
+
 ## 2.0.0 (rewrite)
 
 Completely rewritten as **LD CarWhitelist** (resource `ld_carwhitelist`). Remove the old `CarWhitelist-FiveM` resource before installing.

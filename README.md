@@ -40,8 +40,8 @@ exports.ld_carwhitelist:refreshPlayer(source)  -- after you changed a job or per
 -- client
 local allowed, group = exports.ld_carwhitelist:canUse(vehicle, seat)        -- seat defaults to -1 (driver)
 
--- any side: let everyone use one vehicle (e.g. a test drive)
-Entity(vehicle).state:set('ldCarwhitelistBypass', true, true)
+-- server: let everyone use one vehicle (e.g. a test drive); false removes it again
+exports.ld_carwhitelist:setVehicleBypass(vehicle, true)
 ```
 
 ## Support
