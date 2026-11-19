@@ -11,7 +11,7 @@ Works with ESX, QBCore and Qbox (detected automatically), or standalone with ACE
 - **Only the driver seat is locked by default:** passengers can get in, like someone under arrest in the back. Per group you can lock every seat.
 - **Stopped before the door opens:** no getting in and being thrown out again.
 - **Enforced by the server too:** players put into a vehicle by a script or a cheat are removed. The client is not the only safeguard.
-- **Exceptions for other scripts:** set the `ldCarwhitelistBypass` state bag on a vehicle (e.g. a test drive at the dealer).
+- **Exceptions for other scripts:** call the server export `setVehicleBypass` on a vehicle (e.g. a test drive at the dealer).
 - **Staff bypass** with one ACE: `ldcw.bypass`.
 - Optional **Discord log** when someone tries to take or gets removed from a locked vehicle.
 - Notifications through ox_lib, ESX, QBCore/Qbox or chat (auto-detected), 8 languages, update check.
